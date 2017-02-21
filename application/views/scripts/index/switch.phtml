@@ -1,0 +1,452 @@
+<?php ini_set('memory_limit', '-1');?>
+<?php
+$this->title = "Question Bank";
+$this->headTitle($this->title);
+
+require_once ('/var/www/surveyanyplace/stage/application/models/Paginator_switch.php');
+?>
+
+<!----CODE VOOR eventueel UItbreidingen --->
+
+
+<!--<p class="admin">--><?PHP //echo 'Hi Admin '.$this->username ?><!--</p>-->
+<!--<p><a href="--><?PHP //echo $this->url(array('controller'=>'Generator-Page','action'=>'logout','default',true))?><!--">Sign out</a></p>-->
+
+<!--CODE VOOR POPUP VENSTER REGISTER-->
+
+<!--window.open‘win1.html’,‘Window1’,-->
+<!--‘menubar=no,width=430,height=360,toolbar=no’);-->
+<!--<a href="javascript:self.close()">close window</a>-->
+
+
+<!--// open the window-->
+<!--win3 = window.open("", "Window3", "width=320,height=210,scrollbars=yes");-->
+<!---->
+<!--// write to window-->
+<!--win3.document.writeln("<h2>This is written to Window 3 by the main window</h2>");-->
+
+
+<!--function openURL(sURL) {-->
+<!--opener.document.location = sURL;-->
+<!--}-->
+<!---->
+<!--<a href="javascript:openURL('home.html')">Go Home & </a>-->
+
+
+
+
+<!----------------------------------------------------------------------------------------------------->
+
+<form style="margin-bottom: 30px" method='post' >
+    <p style="font-weight: bold">To switch between dataset, use the dropdownlist below.</p>
+    <label for='urlDB'>Select dataset:</label><br>
+    <select id="DBid" name="urlDB">
+        <!--        <option value="http://local.stage/Index/switch">------Select------</option>-->
+        <option value="http://local.stage/Index/switch">Question Bank</option>
+        <option value="http://local.stage/Index/home">Survey Anyplace</option>
+    </select>
+</form>
+
+<form style="margin-bottom: 30px" action="" method="post">
+    <fieldset>
+        <p style="font-weight: bold"><?php if(count($_POST<=0)){ echo "Fill in your keyword and select a checkbox to search.";} ?></p>
+        <table id="search" cellpadding="0px" cellspacing="0px">
+
+
+            <legend>Search</legend>
+            <tr>
+                <td style="border-style:solid none solid solid;border-color:#4B7B9F;border-width:1px;">
+                    <input name="search" style="width:100px; border:0px solid; height:17px; padding:0px 3px; position:relative;"/></td>
+                <td style="border-style:solid;border-color:#4B7B9F;border-width:1px;">
+                    <input name="image" type="image" id="image" value=" " src="../images/searchbutton3.gif" style="border-style: none; width: 24px; height: 20px;"></td>
+            </tr>
+        </table>
+        <input type="checkbox" name="checkbox[0]" id="checkbox-1" class="custom" value="1"/>
+        <label for="checkbox-1">Quiz</label>
+        <input type="checkbox" name="checkbox[1]" id="checkbox-2" class="custom" value="2"/>
+        <label for="checkbox-2">Questions</label>
+        <input type="checkbox" name="checkbox[2]" id="checkbox-3" class="custom" value="3"/>
+        <label for="checkbox-3">Answer</label>
+    </fieldset>
+</form>
+
+
+<!--Mag pas toegevoegd worden als de data uit de QuestionBank is geïndexeerd in elasticsearch-->
+<!--<!--------------------------------------------------------------------------------------------->
+<form style="margin-bottom: 30px" action="" method='post'>
+    <?php if(!empty($_POST['search']) && !is_null($_POST['search'])) {?>
+        <?php if(isset($_POST['search'])) {?>
+            <fieldset>
+                <table id="searchtable" class="table-striped">
+
+                    <tr>
+                        <th>Search by Questions</th>
+                        <th>&nbsp;</th>
+                        <th>Search by Answers</th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <table id = "tablequestions">
+                                <?php if($this->questionresultsqb['hits']['total'] == 0) {?>
+                                    <p>No questions match your keyword.</p>
+                                <?php }?>
+                                <?php foreach ($this->questionresultsqb['hits']['hits'] as $r) :?>
+                                    <tr class="questionrow">
+                                        <td  class="questions">
+                                            <input type="checkbox" name="checkboxquestionsearchqb[]" id="checkboxquestion_<?php $r['_id']?>" class="custom" value="<?php echo $r['_id']?>"/>
+
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][id]" value="<?php echo $r['_id'] ?>" />
+                                            <!--                                    <input type="text" name="questionqb[--><?php //echo $r['_id']?><!--][qbqt_text]" id="qtext_--><?php //echo $r['_id'] ?><!--" value="--><?php //echo htmlentities($r['_source']['qbqt_text'],ENT_QUOTES) ?><!--">-->
+                                            <textarea name="questionqb[<?php echo $r['_id']?>][qbqt_text]" id="qtext_<?php echo $r['_id'] ?>"><?php echo htmlentities($r['_source']['qbqt_text'],ENT_QUOTES) ?></textarea>
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbqt_question_id]" value="<?php echo $r['_source']['qbqt_question_id'] ?>" />
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qba_question_id]" value="<?php echo $r['_source']['qba_question_id'] ?>" />
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbqt_question_qb_id]" value="<?php echo $r['_source']['qbqt_question_qb_id'] ?>" />
+
+                                            <?PHP if(isset($this->flagquestionsearch)) {?>
+                                                <?PHP foreach($this->flagquestionsearch as $qflagsearchkey=>$qsearchflag) {?>
+
+                                                    <?PHP if($qflagsearchkey==$r['_id']) {?>
+
+
+                                                        <a><?PHP echo $qsearchflag?></a>
+
+
+                                                    <?PHP }?>
+
+                                                <?PHP }?>
+                                            <?PHP }?>
+
+                                        <td>
+                                            <table>
+                                                <?php if(!empty($r['_source']['qbat_text']) || !is_null($r['_source']['qbat_text'])) { ?>
+                                                    <?PHP $aid=0;?>
+                                                    <?php foreach((array)$r['_source']['qbat_text'] as $atar) { ?>
+
+                                                        <?PHP if($aid<sizeof($r['_source']['qbat_text'])) {?>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="checkbox" name="checkboxanswersearchqb[]" id="checkboxanswer_<?php $r['_source']['qba_id'][$aid]?>" class="custom" value="<?php echo $r['_source']['qba_id'][$aid]?>"/>
+
+
+                                                                    <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qba_id][]" value="<?php echo $r['_source']['qba_id'][$aid] ?>" />
+                                                                    <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbat_answer_id][]" value="<?php echo $r['_source']['qbat_answer_id'][$aid] ?>" />
+                                                                    <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbat_answer_qb_id][]" value="<?php echo $r['_source']['qbat_answer_qb_id'][$aid] ?>" />
+                                                                    <input type="text" size="40" name="questionqb[<?php echo $r['_id']?>][qbat_text][]" value="<?php echo $atar ?>"/>
+
+                                                                <td>
+                                                            </tr>
+                                                        <?PHP }?>
+                                                        <?PHP $aid++;?>
+                                                    <?php }?>
+                                                <?php }?>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr><td valign="BASELINE"><br></td></tr>
+                                <?php endforeach;?>
+                            </table>
+                        </td>
+                        <td></td>
+                        <td>
+                            <table id = "tableanswers">
+                                <?php if($this->answerresultsqb['hits']['total'] == 0) {?>
+                                    <p> No answers match your keyword.</p>
+                                <?php }?>
+                                <?php foreach ($this->answerresultsqb['hits']['hits'] as $r) :?>
+                                    <tr class="questionrow">
+                                        <td  class="questions">
+                                            <input type="checkbox" name="checkboxquestionsearchqb[]" id="checkboxquestion_<?php $r['_id']?>" class="custom" value="<?php echo $r['_id']?>"/>
+
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][id]" value="<?php echo $r['_id'] ?>" />
+                                            <!--                                    <input type="text" name="questionqb[--><?php //echo $r['_id']?><!--][qbqt_text]" id="qtext_--><?php //echo $r['_id'] ?><!--" value="--><?php //echo htmlentities($r['_source']['qbqt_text'],ENT_QUOTES) ?><!--">-->
+                                            <textarea name="questionqb[<?php echo $r['_id']?>][qbqt_text]" id="qtext_<?php echo $r['_id'] ?>"><?php echo htmlentities($r['_source']['qbqt_text'],ENT_QUOTES) ?></textarea>
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbqt_question_id]" value="<?php echo $r['_source']['qbqt_question_id'] ?>" />
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qba_question_id]" value="<?php echo $r['_source']['qba_question_id'] ?>" />
+                                            <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbqt_question_qb_id]" value="<?php echo $r['_source']['qbqt_question_qb_id'] ?>" />
+
+
+                                            <?PHP if(isset($this->flagquestionsearch)) {?>
+                                                <?PHP foreach($this->flagquestionsearch as $qflagsearchkey=>$qsearchflag) {?>
+                                                    <?PHP if($qflagsearchkey==$r['_id']) {?>
+                                                        <a><?PHP echo $qsearchflag?></a>
+                                                    <?PHP }?>
+                                                <?PHP }?>
+                                            <?PHP }?>
+
+                                        <td>
+                                            <table>
+                                                <?php if(!empty($r['_source']['qbat_text']) || !is_null($r['_source']['qbat_text'])) { ?>
+                                                    <?PHP $aid=0;?>
+                                                    <?php foreach($r['_source']['qbat_text'] as $atar) { ?>
+
+                                                        <?PHP if($aid<sizeof($r['_source']['qbat_text'])) {?>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="checkbox" name="checkboxanswersearchqb[]" id="checkboxanswer_<?php $r['_source']['qba_id'][$aid]?>" class="custom" value="<?php echo $r['_source']['qba_id'][$aid]?>"/>
+
+                                                                    <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbat_answer_id][]" value="<?php echo $r['_source']['qbat_answer_id'][$aid] ?>" />
+                                                                    <input type="hidden" name="questionqb[<?php echo $r['_id']?>][qbat_answer_qb_id][]" value="<?php echo $r['_source']['qbat_answer_qb_id'][$aid] ?>" />
+                                                                    <input type="text" size="40" name="questionqb[<?php echo $r['_id']?>][qbat_text][]" value="<?php echo $atar ?>"/>
+                                                                <td>
+                                                            </tr>
+                                                        <?PHP }?>
+                                                        <?PHP $aid++;?>
+                                                    <?php }?>
+                                                <?php }?>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr><td valign="BASELINE"><br></td></tr>
+                                <?php endforeach;?>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="delete_questions_search" type="submit" class="btn btn-danger" name="delete_questions_search" formmethod="post" formaction="" value="Delete Questions">
+                            <!--                </td>-->
+                            <!--                <td>-->
+                            <input id="delete_answers_search" type="submit" class="btn btn-danger" name="delete_answers_search" formmethod="post" formaction="" value="Delete Answers">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="save_search" type="submit" class="btn btn-primary" name="Savesearch" formmethod="post" formaction="" value="Update">
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        <?php }?>
+    <?php }?>
+</form>
+<!----------------------------------------------------------------------------------------------->
+
+<form style="margin-bottom: 30px" action="" method='post' id="formid">
+    <fieldset>
+        <p style="font-weight: bold">Select a question and press save to update your data or press save to save your added questions.</p>
+        <table>
+            <legend>Dataset List QuestionBank</legend>
+            <?PHP if(is_null($this->questionsqb) || empty($this->questionsqb))
+            {
+                echo 'There are no questions and answers available in the QuestionBank.';
+
+            }
+            ?>
+            <tr>
+                <th>Questions</th>
+                <!--                <th>&nbsp;</th>-->
+                <th>Answers</th>
+                <th>&nbsp;</th>
+
+            </tr>
+
+            <?php foreach ($this->questionsqb as $question) { ?>
+                <tr class="questionrow">
+                    <td  class="questions" valign="baseline">
+                        <input type="checkbox" name="checkboxquestionqb[]" id="checkboxquestionqb_<?php $question['id']?>" class="custom" value="<?php echo $question['id']?>"/>
+
+                        <input type="hidden" name="question[<?php echo $question['id'];?>][id]" value="<?php echo $question['id']?>" />
+                        <input type="hidden" name="question[<?php echo $question['id'];?>][question_id]" value="<?php echo $question['question_id']?>" />
+                        <input type="hidden" name="question[<?php echo $question['id'];?>][question_qb_id]" value="<?php echo $question['question_qb_id']?>" />
+                        <!--                        <input type="text" name="question[--><?php //echo $question['id'];?><!--][text]" id="qtext_--><?php //echo $question['id']?><!--" value="--><?php //echo htmlentities($question['text'],ENT_QUOTES); ?><!--">-->
+                        <textarea type="text" name="question[<?php echo $question['id'];?>][text]" id="qtext_<?php echo $question['id']?>"><?php echo htmlentities($question['text'],ENT_QUOTES); ?></textarea>
+
+                    </td>
+
+                    <td>
+                        <table class="answers" id="answertableid">
+                            <?php foreach($question['answers'] as $answers): ?>
+
+                                <tr class="answer">
+                                    <td class='answercolumn' id="answerscolumn_<?PHP echo $question['id']?>" valign="baseline">
+
+                                        <input type="checkbox" name="checkboxanswersqb[]" id="checkboxanswersqb_<?php $question['id']?>[answers][<?php echo $answers['answer_qb_id']?>]" class="custom" value="<?php echo $answers['answer_qb_id'];?>"/>
+
+                                        <input type='hidden' name='question[<?php echo $question['id'];?>][answers][<?php echo $answers['answer_qb_id']; ?>][id]' value='<?php echo $answers['id']; ?>' />
+                                        <input type='hidden' name='question[<?php echo $question['id'];?>][answers][<?php echo $answers['answer_qb_id']; ?>][answer_id]' value='<?php echo $answers['answer_id']; ?>' />
+                                        <input type='hidden' name='question[<?php echo $question['id'];?>][answers][<?php echo $answers['answer_qb_id']; ?>][answer_qb_id]' value='<?php echo $answers['answer_qb_id']; ?>' />
+
+                                        <input type='text' size='40' name='question[<?php echo $question['id'];?>][answers][<?php echo $answers['answer_qb_id']; ?>][text]' value='<?php echo htmlentities($answers['text'],ENT_QUOTES);?>'>
+                                        <!--                                        <textarea name='question[--><?php //echo $question['id'];?><!--][answers][--><?php //echo $answers['answer_qb_id']; ?><!--][text]'>--><?php //echo htmlentities($answers['text'],ENT_QUOTES);?><!--</textarea>-->
+
+                                    </td>
+
+                                </tr>
+                            <?php endforeach; ?>
+                            <tr class="new2">
+
+                                <td id="addanswertry">
+
+                                    <input type="button" class="classanswer" name="Add Answer[<?PHP echo $question['id']?>]" id="addidanswer_<?PHP echo $question['id']?>" value="Add Answer" >
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr><td valign="BASELINE"><br></td></tr>
+            <?php } ?>
+
+
+            <tr class="new" id="trying">
+                <td id="try"><input type="button" name = "additem3" id="addidquestion" value="add Question" ></td>
+
+
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit" class="btn btn-danger" name="delete_question" formmethod="post" formaction="">Delete Questions</button>
+                    <!--                </td>-->
+                    <!--                <td></td>-->
+                    <!--                <td>-->
+                    <button type="submit" class="btn btn-danger" name="delete_answer" formmethod="post" formaction="">Delete Answers</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <!--            <button id="save_btn" type="submit" class="btn btn-primary" name="Save">Save</button>-->
+                    <input id="save_btn" type="submit" class="btn btn-primary" name="Save"  value="Save">
+
+                </td>
+            </tr>
+            <td>
+
+                <input id="generate_page__btn" type="submit" class="btn btn-primary" name="GeneratePage"  value="Generate Page">
+            </td>
+
+            <tr>
+                <td>
+                    <ul class="pagination">
+                        <?php
+                        $numrows = $this->numRowsQB;
+                        $pages = new Paginator_switch();
+                        $pages->items_per_page = 10;
+                        $pages->items_total = $numrows;
+                        $pages->mid_range = 5;
+                        $pages->paginate();?>
+                        <li><?php echo $pages->display_pages();?></li>
+                    </ul>
+                </td>
+            </tr>
+
+        </table>
+
+    </fieldset>
+</form>
+
+
+
+<script type="text/javascript" >
+
+    var added=0;
+
+
+    var QuestionBank = {
+
+        trying: null,
+
+
+        onReady: function() {
+            QuestionBank.trying = $('#try');
+            QuestionBank.urldb=$('#DBid');
+            QuestionBank.existingAddanswer=$('.classanswer');
+            QuestionBank.answercolumn=$('.answercolumn');
+            QuestionBank.lastchildanswercolumn=$('td:last-child');
+            QuestionBank.questionrow=$('tr.questionrow');
+
+
+            $('#addidquestion').on('click', QuestionBank.addQuestion);
+
+
+            /*voor iedere addanswer button, als je ze aankliktn,voeg je een addanswer veld toe*/
+
+            QuestionBank.existingAddanswer.on('click',QuestionBank.addAnswer);
+
+
+            QuestionBank.urldb.change(function () {
+                window.location.href = this.value;
+            });
+
+        },
+
+        addQuestion: function(event) {
+
+            added++;
+
+            var standaardtext = $('<tr class="rijanswer"><td class="answertextadded"><input type="text" name="addedquestiontext['+added+'][questiontext]" class="addAnswer" value =""></td></tr>');
+
+
+            var button=$('<button class="answertextfield" name="answerbutton[]" id="'+added+'">Add Answer</button>');
+
+
+            QuestionBank.trying.append(standaardtext);
+            standaardtext.append(button);
+
+
+            button.on('click', QuestionBank.addAnswerField);
+
+
+            return false;
+
+        },
+
+        addAnswerField: function(event){
+            console.log(event.currentTarget.id);
+            var addanswerfieldbuttonid=event.currentTarget.id;
+            $(event.currentTarget).before('<tr><td><input type="text" name="addedquestiontext['+addanswerfieldbuttonid+'][answertexts][][answertext]" value="" ></td></tr>');
+            //$(event.currentTarget).parents('tr.rijanswer').append('<tr><td><input type="text" name="addedquestiontext['+added+'][answertexts][][answertext]" ></td></tr></table></td>');
+
+
+            return false;
+        },
+
+        /*deze is voor een addanswer die gekoppeld is aa nbestaande vragen en atnworoden uit survey database*/
+
+        addAnswer: function(event) {
+
+            var questionqbid=$(event.currentTarget).parents('tr.questionrow').find('input:nth-of-type(2)').val();
+            var question_id=$(event.currentTarget).parents('tr.questionrow').find('input:nth-of-type(3)').val();
+            var testingtr=$(event.currentTarget).parents('tr.new2').find('#addanswertry');
+            var tdanswercolumnadd=$(event.currentTarget).parents('tr.new2').siblings().find(QuestionBank.answercolumn).last();
+
+            $(event.currentTarget).before('<tr><td><input type="checkbox" name="checkboxanswersqb[]" id="checkboxanswersqb_['+questionqbid+'][answers][]" class="custom" value=""></td><td><input type="hidden" name="addednewanswer['+questionqbid+'][questionid]" value='+question_id+'><input type="text" name="addednewanswer['+questionqbid+'][answers][]"></td></tr>');
+            //testingtr.append('<tr><td><input type="checkbox" name="checkboxanswersqb[]" id="checkboxanswersqb_['+questionqbid+'][answers][]" class="custom" value=""></td><td><input type="hidden" name="addednewanswer['+questionqbid+'][questionid]" value='+question_id+'><input type="text" name="addednewanswer['+questionqbid+'][answers][]"></td></tr>');
+            return false;
+
+
+        }
+
+
+    };
+    jQuery(document).ready(QuestionBank.onReady);
+
+    /*
+     jQuery(document).ready(function($){*/
+
+</script>
+<style>
+
+    hr.style-one {
+        border: 0;
+        height: 1px;
+        width: 850px;
+        background: #333;
+        background-image: -webkit-linear-gradient(left, #ccc, #333, #ccc);
+        background-image:    -moz-linear-gradient(left, #ccc, #333, #ccc);
+        background-image:     -ms-linear-gradient(left, #ccc, #333, #ccc);
+        background-image:      -o-linear-gradient(left, #ccc, #333, #ccc);
+    }
+
+    p.admin{
+        text-decoration-color: darkred;
+
+        text-align: justify;
+
+
+
+    }
+
+</style>
+<link href="/bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">

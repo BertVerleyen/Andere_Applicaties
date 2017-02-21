@@ -1,0 +1,78 @@
+<?php /*******gebruikt om te uitvoer toon-quizzes te geven die een oplijsting van alle quizzes met de daarbij horende questions en answers bevat
+ ->kan gebruikt worden als uitbreiding*******/?>
+
+
+<br /><br />
+<div id="view-content">
+    <p>View script for controller <b>GeneratorPage</b> and script/action name <b>toonQuizzes</b></p>
+</div>
+
+
+
+
+<?php
+//echo '<pre>';
+//foreach($this->quizzes as $quiz)
+//{
+//    var_dump($quiz);
+//
+//    foreach($quiz as $qblock)
+//    {
+//       // var_dump($qblock);
+//    }
+//
+//
+//}
+
+echo '</pre>';
+?>
+
+<form action="" method='post'>
+    <fieldset>
+        <table id = "tablequestions" class="table-striped">
+            <label for ="generatequiz">Overzicht toegevoegde vragen QuestionBank to page creator</label>
+            <?php foreach ($this->quizzes as $quiz) { ?>
+                <tr class="quizrow">
+                    <!--                   <pre> --><?PHP //var_dump($quiz)?><!--</pre>-->
+                    <td  class="questions" valign="baseline">
+                        <input type="checkbox" name="checkboxquiz[]" id="checkboxquiz_<?php $quiz['id']?>" class="custom" value="<?php echo $quiz['id']?>"/>
+                        <input type="hidden" name="quiz[<?php echo $quiz['id']?>][quizid]" value="<?php echo $quiz['id']?>" />
+                        <input type="hidden" name="quiz[<?php echo $quiz['id']?>][questionblockid]" value="<?php echo $quiz['questionblockid']?>" />
+                        <input type="text" name="quiz[<?php echo $quiz['id']?>][title]" id="qtext_<?php echo $quiz['id']?>" value="<?php echo htmlentities($quiz['quiztitle'],ENT_QUOTES) ?>">
+                    </td>
+
+                    <td>
+                        <table class="questionblocks" id="qblid">
+                            <?php foreach($quiz['questionsfromquiz'] as $questionfromquiz): ?>
+                                <tr>
+                                    <td  class="questions" valign="baseline">
+                                        <input type="checkbox" name="checkboxquestion[]" id="checkboxquestion_<?php $questionfromquiz['question_id']?>" class="custom" value="<?php echo $questionfromquiz['question_id']?>"/>
+                                        <input type="hidden" name="quiz[<?PHP echo $quiz['id'] ?>][questionsfromquiz][<?php echo $questionfromquiz['question_id']?>][id]" value="<?php echo $questionfromquiz['question_id']?>" />
+
+                                        <input type="text" name="quiz[<?PHP echo $quiz['id']?>][questionsfromquiz][<?php echo $questionfromquiz['question_id']?>][text]" id="qtext_<?php echo $questionfromquiz['question_id']?>" value="<?php echo htmlentities($questionfromquiz['text'],ENT_QUOTES) ?>">
+                                    </td>
+
+                                    <td>
+                                        <table>
+                                            <?PHP foreach($questionfromquiz['answersfromquestion'] as $answerfromquestion)  {?>
+                                                <tr>
+                                                    <td  class="questions" valign="baseline">
+                                                        <input type="checkbox" name="checkboxanswer[]" id="checkboxanswer_<?php $answerfromquestion['answer_id']?>" class="custom" value="<?php echo $answerfromquestion['answer_id']?>"/>
+                                                        <input type="hidden" name="quiz[<?PHP echo $quiz['id']?>][questionsfromquiz][<?PHP echo $questionfromquiz['question_id']?>][answersfromquestion][<?php echo $answerfromquestion['answer_id']?>][answerid]" value="<?php echo $answerfromquestion['answer_id']?>" />
+
+                                                        <input type="text" name="quiz[<?php echo $quiz['id']?>] [questionsfromquiz][<?php echo $questionfromquiz['question_id']?>][answersfromquestion][<?php echo $answerfromquestion['answer_id']?>][text]" id="qtext_<?php echo $answerfromquestion['answer_id']?>" value="<?php echo htmlentities($answerfromquestion['text'],ENT_QUOTES) ?>">
+                                                    </td>
+                                                </tr>
+                                            <?PHP }?>
+                                        </table>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                    </td>
+                </tr>
+                <tr><td valign="BASELINE"><br></td></tr>
+            <?php } ?>
+        </table>
+    </fieldset>
+</form>

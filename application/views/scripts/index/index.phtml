@@ -1,0 +1,29 @@
+<?php /*******verwijst de gebruiker door naar de login pagina*******/?>
+
+<h1>Admin Login Form</h1>
+
+
+<?PHP
+
+if(isset($this->errorMessage))
+{
+    echo $this->errorMessage;
+}
+
+
+if(isset($this->errorMessage2))
+{
+    echo $this->errorMessage2;
+}
+
+ $this->form->setAction($this->url());
+echo $this->form;
+
+
+?>
+
+<link href="/bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+
+
+

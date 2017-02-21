@@ -1,0 +1,419 @@
+<?php ini_set('memory_limit', '-1');?>
+<?php
+$this->title = "Survey Anyplace";
+$this->headTitle($this->title);
+
+require_once ('/var/www/surveyanyplace/stage/application/models/Paginator.php');
+
+require '/var/www/surveyanyplace/stage/vendor/autoload.php';
+
+?>
+<table>
+    <tr>
+        <td valign = "right">
+            <a href='<?php echo $this->url(array("action"=>"signout")); ?>'> logout</a>
+        </td> </tr>
+</table>
+
+
+<form style="margin-bottom: 30px"  method='post' >
+    <fieldset>
+        <p style="font-weight: bold">To switch between dataset, use the dropdownlist below.</p>
+        <label for='urlDB'>Select dataset:</label><br>
+        <select id='DBid' name='urlDB'>
+            <!--            <option value="http://local.stage/">------Select------</option>-->
+            <option value="http://local.stage/Index/home">Survey Anyplace</option>
+            <option value="http://local.stage/Index/switch">Question Bank</option>
+        </select>
+    </fieldset>
+</form>
+
+<form style="margin-bottom: 30px" action="" method="GET">
+    <fieldset>
+        <p style="font-weight: bold"><?php if(count($_POST<=0)){ echo "Fill in your keyword and select a checkbox to search.";} ?></p>
+        <table cellpadding="0px" cellspacing="0px">
+            <legend>Search</legend><tr>
+                <td style="border-style:solid none solid solid;border-color:#4B7B9F;border-width:1px;">
+                    <input type="search" name="search" id="search" style="width:100px; border:0px solid; height:17px; padding:0px 3px; position:relative;"/></td>
+                <td style="border-style:solid;border-color:#4B7B9F;border-width:1px;">
+                    <input name="image" type="image" id="image"   src="/images/searchbutton3.gif" style="border-style: none; width: 24px; height: 20px;"></td>
+            </tr>
+        </table>
+        <input type="checkbox" name="checkbox[0]" id="checkbox-1" class="custom" value="1"/>
+        <label for="checkbox-1">Quiz</label>
+        <input type="checkbox" name="checkbox[1]" id="checkbox-2" class="custom" value="2"/>
+        <label for="checkbox-2">Questions</label>
+        <input type="checkbox" name="checkbox[2]" id="checkbox-3" class="custom" value="3"/>
+        <label for="checkbox-3">Answer</label>
+    </fieldset>
+</form>
+
+
+
+<!--SQL SEARCH-->
+<form style="margin-bottom: 30px" action="" method='post'>
+<!--    <p>--><?PHP //echo $this->urlgenerated ?><!--</p>-->
+<!---->
+<!--    --><?PHP //if(isset($_GET['search']))echo $_GET['search']?>
+
+<!--    --><?php //if(isset($_POST['search'])){ ?>
+<fieldset>
+    <table id="searchtable" class="table-striped">
+        <tr>
+            <th>Search by Quiz</th>
+            <th>Search by Questions</th>
+            <th>&nbsp;</th>
+            <th>Search by Answers</th>
+        </tr>
+    </table>
+
+
+    <form action="" method="GET">
+        <input type="text" name="query" />
+        <input type="submit" value="Search" />
+    </form>
+
+
+
+
+
+
+
+
+    <?php  if(isset($_POST['query']))
+    {?>
+    <!-------------------------------------------QUESTIONS matched met zoekterm ,de  checkboxes en functionaliteit zijn niet hergeïntegreerd-------------------------------------------------------->
+    <fieldset>
+        <table>
+
+            <?PHP foreach($this->questionssearch as $searchquestion)
+            {?>
+            <tr>
+                <td valign="baseline">
+                    <input type='checkbox' value="<?PHP echo $searchquestion['q_question_id']?>" />
+                    <textarea name ="searchquestion"><?PHP echo $searchquestion['text']?></textarea>
+
+                </td>
+                <td valign="baseline">
+                    <br/>
+
+
+
+                </td>
+
+                <td>
+
+
+                    <table>
+
+
+                        <?PHP  foreach($searchquestion['answers'] as $matchedanswers)
+                        {?>
+                            <tr>
+                                <td valign="baseline">
+                                    <input type="hidden"/>
+                                    <input type="text " value="<?PHP echo $matchedanswers['text']?>"/>
+
+
+                                </td>
+                            </tr>
+
+
+
+                        <?PHP }?>
+                    </table>
+                </td>
+
+
+
+                <?PHP  }?>
+
+            </tr>
+
+
+
+
+
+
+
+            </tr>
+        </table>
+
+
+        <table>
+
+            <?PHP foreach($this->quizzessearch as $searchquiz)
+            {?>
+
+            <tr>
+                <td valign="baseline">
+                    <input type='checkbox' value="<?PHP echo $searchquiz['q_question_id']?>" />
+                    <textarea name ="searchquiz"><?PHP echo $searchquiz['quiztitle']?></textarea>
+
+                </td>
+                <td valign="baseline">
+                    <br/>
+
+
+
+                </td>
+
+                <td>
+
+
+                    <table>
+
+
+                        <?PHP  foreach($searchquiz['questionsfromquiz'] as $matchedquestions)
+                        {?>
+                            <tr>
+                                <td valign="baseline">
+                                    <input type="hidden"/>
+                                    <input type="text " value="<?PHP echo $matchedquestions['text']?>"/>
+
+
+                                </td>
+
+
+                                <td>
+                                    <table>
+                                        <?PHP foreach($matchedquestions['answersfromquestion'] as $matchedanswers) {?>
+                                            <tr>
+
+                                                <td>
+                                                    <input type="hidden"/>
+                                                    <input type="text " value="<?PHP echo $matchedanswers['text']?>"/>
+
+                                                </td>
+
+
+
+
+                                            </tr>
+
+
+
+                                        <?PHP }?>
+                                    </table>
+
+
+                                </td>
+                            </tr>
+
+
+
+
+
+
+                        <?PHP }?>
+                    </table>
+                </td>
+
+
+
+                <?PHP  }?>
+
+            </tr>
+
+
+
+
+
+
+
+            <!--    else{ // if there is no matching rows do following-->
+            <!--      //echo "No results";-->
+            <!-- }-->
+
+
+
+
+            </tr>
+        </table>
+
+
+        <?PHP } ?>
+
+
+
+    </fieldset>
+
+
+
+
+
+
+    <!--    else{ // if there is no matching rows do following-->
+    <!--      //echo "No results";-->
+    <!-- }-->
+
+
+
+
+
+
+
+
+    </table>
+</fieldset>
+</form>
+
+<!--END SQL SEARCH-->
+
+<table>
+    <tr>
+        <td valign = "right">
+
+
+            <h3> Welcome <?=$this->username?>,<br></h3>
+
+
+            <a href='<?php echo $this->url(array("controller"=>"Generator-Page","action"=>"create-Quiz")); ?>'> Create a Quiz</a>
+
+        </td> </tr>
+</table>
+
+<form style="margin-bottom: 30px" action="" method='post'>
+    <fieldset>
+        <p style="font-weight: bold">Select a question and press save to add them to the QuestionBank.</p>
+        <table id = "tablequestions" class="table-striped">
+            <legend>List Dataset Survey Anyplace</legend><tr>
+            <tr>
+                <th>Questions</th>
+                <th>Answers</th>
+                <th>&nbsp;</th>
+            </tr>
+            <?php foreach ($this->questions as $question) { ?>
+                <tr class="questionrow">
+                    <?PHP if(!empty($question['text']) && !is_null($question['text'])) { ?>
+                        <td  class="questions" valign="baseline">
+
+
+                            <input type="checkbox" name="checkboxquestion[]" id="checkboxquestion_<?php $question['id']?>" class="custom" value="<?php echo $question['id']?>"/>
+                            <input type="hidden" name="question[<?php echo $question['id']?>][id]" value="<?php echo $question['id']?>" />
+                            <!--                            <input type="hidden" name="question[--><?php //echo $question['question_block_id']?><!--][question_block_id]" value="--><?php //echo $question['question_block_id']?><!--"/>-->
+                            <!--                            <input type="text" size="50" name="question[--><?php //echo $question['id']?><!--][text]" id="qtext_--><?php //echo $question['id']?><!--" value="--><?php //echo htmlentities($question['text'],ENT_QUOTES) ?><!--">-->
+                            <textarea name="question[<?php echo $question['id']?>][text]" id="qtext_<?php echo $question['id']?>"><?php echo htmlentities($question['text'],ENT_QUOTES) ?></textarea>
+
+
+                            <?PHP if(isset($this->flagquestion)) {?>
+                                <?PHP foreach($this->flagquestion as $qflagkey=>$qflag) {?>
+
+                                    <?PHP if($qflagkey==$question['id']) {?>
+
+
+                                        <a><?PHP echo $qflag?></a>
+
+
+                                    <?PHP }?>
+
+                                <?PHP }?>
+                            <?PHP }?>
+
+                        </td>
+                    <?PHP }?>
+
+
+                    <td>
+                        <table class="answers" id="answertableid">
+                            <?php foreach($question['answers'] as $answers): ?>
+
+                                <tr class="answer">
+                                    <?PHP if((!empty($answers['text']) && !is_null($answers['text']))) { ?>
+                                        <td class='answercolumn' valign="baseline">
+
+
+                                            <input type='hidden' name='question[<?php echo $question['id']?>][answers][<?php echo $answers['answer_id']; ?>][id]' value='<?php echo $answers['id']; ?>' />
+                                            <input type='text' size="40" name='question[<?php echo $question['id']?>][answers][<?php echo $answers['answer_id']; ?>][text]' value='<?php echo htmlentities($answers['text'],ENT_QUOTES);?>'>
+                                            <!--                                            <textarea name='question[--><?php //echo $question['id']?><!--][answers][--><?php //echo $answers['answer_id']; ?><!--][text]'>--><?php //echo htmlentities($answers['text'],ENT_QUOTES);?><!--</textarea>-->
+
+                                        </td>
+                                    <?PHP }?>
+
+                                </tr>
+
+                            <?php endforeach; ?>
+
+
+                        </table>
+                    </td>
+
+                </tr>
+                <tr><td style="vertical-align: baseline"><br></td></tr>
+            <?php } ?>
+
+
+
+            <tr class="new">
+
+            </tr>
+            <tr>
+                <td>
+                    <input id="save_btn" type="submit" class="btn btn-primary" name="Save" formmethod="post" formaction="" value="Save">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <ul class="pagination">
+                        <?php
+                        $numrows = $this->numRows;
+                        $pages = new Paginator();
+                        $pages->items_per_page = 10;
+                        $pages->items_total = $numrows;
+                        $pages->mid_range = 5;
+                        $pages->paginate();?>
+                        <li><?php echo $pages->display_pages();?></li>
+                    </ul>
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+</form>
+
+
+
+<script type="text/javascript" >
+
+
+
+
+
+    $(document).ready(function(){
+
+
+        //Function om te switchen tussen de verschillende pagina's
+        $('#DBid').change(function () {
+            window.location.href = this.value;
+
+
+        });
+
+
+        $('ul.pagination li').click(function(e){
+
+            $('ul.pagination li').removeClass('active');
+            $(this).addClass('active');
+
+        });
+
+
+
+
+
+    });
+</script>
+
+<style>
+    hr.style-one {
+        border: 0;
+        height: 1px;
+        width: 850px;
+        background: #333;
+        background-image: -webkit-linear-gradient(left, #ccc, #333, #ccc);
+        background-image:    -moz-linear-gradient(left, #ccc, #333, #ccc);
+        background-image:     -ms-linear-gradient(left, #ccc, #333, #ccc);
+        background-image:      -o-linear-gradient(left, #ccc, #333, #ccc);
+    }</style>
+<link href="/bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">

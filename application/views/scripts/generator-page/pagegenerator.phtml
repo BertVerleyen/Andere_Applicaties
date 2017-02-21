@@ -1,0 +1,133 @@
+<?php /*******zorgt voor de uitvoer als er binnen de switch.phtml op de button generate page wordt geklikt*******/ ?>
+
+<form method="post" >
+    <fieldset>
+        <table class="table-striped">
+            <?PHP if(isset($_GET)) {?>
+                <?PHP foreach($_GET as $questionarray) {?>
+                    <tr>
+                    <td valign = "baseline">
+                        <input type="checkbox" name="checkboxquestionarray[]" id="checkboxquestionarray_<?php echo $questionarray['geselecteerde_question']['questionqbid']?>" class="custom" value="<?php echo $questionarray['geselecteerde_question']['questionqbid']?>"/>
+                        <input type="hidden" name="qarray[<?PHP echo $questionarray['geselecteerde_question']['questionqbid']?>][questionqbid] " value="<?php echo $questionarray['geselecteerde_question']['questionqbid']?>" />
+
+                        <textarea name="qarray[<?PHP echo $questionarray['geselecteerde_question']['questionqbid']?>][questiontext]  " id="qtext_<?php echo $questionarray['geselecteerde_question']['questionqbid']?>"><?php echo htmlentities($questionarray['geselecteerde_question']['questiontext'],ENT_QUOTES) ?>"</textarea>
+                    </td>
+                    <td style="vertical-align: baseline"><br/></td>
+
+                    </td>
+
+                    <?PHP if (!empty($questionarray['geselecteerde_answers']) && !is_null($questionarray['geselecteerde_answers'])) {?>
+                        <td>
+                            <table>
+                                <?PHP foreach($questionarray['geselecteerde_answers'] as $qaid=>$qavalue) {?>
+
+                                    <tr>
+                                        <td valign ="baseline">
+
+                                            <input type="hidden" name="qarray[<?PHP echo $questionarray['geselecteerde_question']['questionqbid']?>][answertexts][<?PHP echo $qavalue['answer_qb_id']?>][answerqbid] "       value="<?php echo $qavalue['answer_qb_id']?>" />
+                                            <input type="hidden" name="qarray[<?PHP echo $questionarray['geselecteerde_question']['questionqbid']?>][answertexts][<?PHP echo $qavalue['answer_qb_id']?>][questionqbid] "    value="<?php echo $qavalue['questionqbid']?>" />
+                                            <input type="text" size="40" name="qarray[<?PHP echo $questionarray['geselecteerde_question']['questionqbid']?>][answertexts][<?PHP echo $qavalue['answer_qb_id']?>][answertext] "      id="atext_<?php echo $qavalue ['answer_qb_id']?>" value="<?php echo htmlentities($qavalue['answertext'],ENT_QUOTES) ?>"/>
+
+                                        </td>
+                                    </tr>
+                                <?PHP } ?>
+                            </table>
+                        </td>
+
+                        </tr>
+                    <?PHP }?>
+                    <tr><td style="vertical-align: baseline"><br></td></tr>
+                <?PHP }?>
+            <?PHP }?>
+            <tr>
+                <td>
+                    <?PHP echo $this->nocheckboxselected?>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="btn btn-primary" name="Add_to_your_quiz" id="add_to_your_quiz_id" >Add to your quiz </button
+
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <?PHP echo $this->noquiz?>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div id="dialog-modal" class="modal-dialog" title="pop-up dialog">
+                        <div class="modal-content">
+                            <p>short url link met quiz</p>
+                        </div>
+                    </div>
+
+                    <div id="someHiddenDiv" style="display: none;">no checkboxes were selected</div>
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+</form>
+
+
+<script type="text/javascript">
+
+    $(function()
+    {
+
+
+        $( "#dialog-modal" ).dialog({
+
+
+            autoOpen: false,
+            show: {
+                effect: "blind",
+                duration:1000
+
+            },
+            hide: {
+                effect: "explode",
+                duration:1000
+
+            },
+            height: 140,
+            modal: true
+        });
+
+        $( "#add_to_your_quiz_id" ).click(function(e) {
+            //console.log($(e.currentTarget).parents('.table-striped').children('tbody').children('tr').children('td'));
+
+            var searchIDs = $(".table-striped input:checkbox:checked").map(function(){
+                return $(this).val();
+            }).get();
+            console.log(searchIDs);
+
+
+            if(searchIDs.length)
+            {
+                $( "#dialog-modal" ).dialog( "open" );
+                $("#someHiddenDiv").hide();
+
+            }
+            else{
+
+                $("#someHiddenDiv").show();
+            }
+
+            return false;
+
+        });
+
+    });
+
+
+</script>
+
+
+<link href="/bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
