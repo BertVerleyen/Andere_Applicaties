@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="E2EOefDatabaseModelStoreContainer" CdmEntityContainer="E2EOefDBEntities">
+    <EntitySetMapping Name="Bezoekers">
+      <EntityTypeMapping TypeName="E2EOefDatabaseModel.Bezoeker">
+        <MappingFragment StoreEntitySet="Bezoeker">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Ingelogde_Bezoeker" ColumnName="Ingelogde_Bezoeker" />
+          <ScalarProperty Name="Voornaam" ColumnName="Voornaam" />
+          <ScalarProperty Name="Achternaam" ColumnName="Achternaam" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Land" ColumnName="Land" />
+          <ScalarProperty Name="Telefoon" ColumnName="Telefoon" />
+          <ScalarProperty Name="Onderwerp" ColumnName="Onderwerp" />
+          <ScalarProperty Name="Bericht" ColumnName="Bericht" />
+          <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="E2EOefDatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="E2EOefDatabaseModelStoreContainer">
+          <EntitySet Name="Bezoeker" EntityType="E2EOefDatabaseModel.Store.Bezoeker" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="Bezoeker">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Ingelogde_Bezoeker" Type="varchar" Nullable="false" MaxLength="3" />
+          <Property Name="Voornaam" Type="varchar" MaxLength="50" />
+          <Property Name="Achternaam" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" Nullable="false" MaxLength="70" />
+          <Property Name="Land" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Telefoon" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Onderwerp" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Bericht" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="CreationDate" Type="varchar" Nullable="false" MaxLength="60" />
+        </EntityType>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="E2EOefDatabaseModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="E2EOefDBEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="Bezoekers" EntityType="E2EOefDatabaseModel.Bezoeker" />
+        </EntityContainer>
+        <EntityType Name="Bezoeker">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Ingelogde_Bezoeker" Type="String" Nullable="false" MaxLength="3" Unicode="false" FixedLength="false" />
+          <Property Name="Voornaam" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Achternaam" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="70" Unicode="false" FixedLength="false" />
+          <Property Name="Land" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Telefoon" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Onderwerp" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Bericht" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="CreationDate" Type="String" Nullable="false" MaxLength="60" Unicode="false" FixedLength="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="E2EOefDatabaseModelStoreContainer" CdmEntityContainer="E2EOefDBEntities">
+          <EntitySetMapping Name="Bezoekers">
+            <EntityTypeMapping TypeName="E2EOefDatabaseModel.Bezoeker">
+              <MappingFragment StoreEntitySet="Bezoeker">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Ingelogde_Bezoeker" ColumnName="Ingelogde_Bezoeker" />
+                <ScalarProperty Name="Voornaam" ColumnName="Voornaam" />
+                <ScalarProperty Name="Achternaam" ColumnName="Achternaam" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Land" ColumnName="Land" />
+                <ScalarProperty Name="Telefoon" ColumnName="Telefoon" />
+                <ScalarProperty Name="Onderwerp" ColumnName="Onderwerp" />
+                <ScalarProperty Name="Bericht" ColumnName="Bericht" />
+                <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
